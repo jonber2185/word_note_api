@@ -28,6 +28,11 @@ def update_user_password(user_id: str, new_password: str):
 
 def delete_user(user_id: str):
     run_sql(
-        "UPDATE users SET deleted_at = NOW() WHERE user_id = %s",
+        """
+        UPDATE users 
+        SET deleted_at = NOW(), 
+            user_id = CONCAT(user_id, '_disabled_', UNIX_TIMESTAMP()) 
+        WHERE user_id = %s
+        """,
         (user_id,)
     )

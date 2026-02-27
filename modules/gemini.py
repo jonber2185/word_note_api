@@ -7,93 +7,21 @@ load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
+def load_prompt(filename):
+    path = os.path.join(os.path.dirname(__file__), '..', 'prompts', filename)
+    with open(path, 'r', encoding='utf-8') as f:
+        return f.read()
+
 def get_gemini_response(words: list) -> dict:
+    system_instruction = load_prompt('gemini_system.txt')
+
     response = client.models.generate_content(
         model="gemini-2.5-flash", 
         contents=str(words),
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
             max_output_tokens=8000,
-            system_instruction=(
-                "너는 영단어 학습 보조 도구야. 사용자가 단어들을 입력하면 아래와 같은 형식으로 대답해줘"
-                """
-                [
-                    {
-                        "word": "promote",
-                        "level": "B1",
-                        "definitions": [
-                            {
-                                "ko": ["촉진하다", "증진시키다", "장려하다"],
-                                "pos": "verb",
-                                "example": [
-                                    {
-                                        "en": "The campaign aims to promote healthy eating habits.",
-                                        "ko": "그 캠페인은 건강한 식습관을 장려하는 것을 목표로 합니다."
-                                    },
-                                    {
-                                        "en": "Reading books can promote children's imagination.",
-                                        "ko": "책을 읽는 것은 아이들의 상상력을 증진시킬 수 있습니다."
-                                    },
-                                ]
-                            },
-                            {
-                                "ko": ["승진시키다"],
-                                "pos": "verb",
-                                "example": [
-                                    {
-                                        "en": "She was promoted to manager last month.",
-                                        "ko": "그녀는 지난달에 매니저로 승진했습니다."
-                                    },
-                                ]
-                            },
-                        ]
-                    },
-                    {
-                    "word": "apron",
-                    "level": "A2",
-                    "definitions": [
-                        {
-                            "ko": [
-                                "앞치마"
-                            ],
-                            "pos": "noun",
-                            "example": [
-                                {
-                                    "en": "She tied her apron before she started baking.",
-                                    "ko": "그녀는 베이킹을 시작하기 전에 앞치마를 묶었습니다."
-                                },
-                                {
-                                    "en": "He wears an apron to protect his clothes while painting.",
-                                    "ko": "그는 그림을 그리는 동안 옷을 보호하기 위해 앞치마를 입습니다."
-                                },
-                            ]
-                        },
-                        {
-                        "ko": [
-                                "주기장",
-                                "계류장"
-                            ],
-                            "pos": "noun",
-                            "example": [
-                                {
-                                    "en": "The plane taxied to the apron after landing.",
-                                    "ko": "비행기는 착륙 후 주기장으로 이동했습니다."
-                                },
-                            ]
-                        }
-                    ]
-                    }
-                ]
-                """
-                "각 definitions는 자주 사용되는 definition을 기준 최소 1개, 최대 5개로 뽑아줘"
-                "너무 길거나 어려운 예문은 자제해줘"
-                "* 각 뜻마다 문맥이 뚜렷한 예문을 7개씩 생성할 것."
-                "예문이 7개까진 나오지 않는다면, 주어만 변형하는 방식처럼 단순한 것도 좋아"
-                "반드시 JSON으로만 대답해"
-                "level에는 해당 단어의 CEFR 레벨(A1~C2)도 포함해줘"
-                "만약 단어의 뜻이 없거나 오타를 낸 것 같다면, 수정하지 말고 목록에서 제외해줘. 중괄호도 필요없어"
-                "또한, token 절약을 위해, 들여쓰기는 없애줘"
-            )
+            system_instruction=system_instruction
         )
     )
 

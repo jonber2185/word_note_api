@@ -1,6 +1,5 @@
 import bcrypt as _bcrypt
 import errors.base as _errors
-import modules as _modules
 from hashlib import sha256 as _sha256
 from db import modules as _db_modules
 from flask_jwt_extended import (
@@ -18,8 +17,9 @@ def hash_password(password: str) -> str:
 
 def login(input_id: str, input_password: str):
     # 타입 확인
-    _modules.user.is_valid_user_id(input_id) # id 형식 확인
-    _modules.user.is_valid_password(input_password) # pw 형식 확인
+    from . import user as _user
+    _user.is_valid_user_id(input_id) # id 형식 확인
+    _user.is_valid_password(input_password) # pw 형식 확인
 
     # 실제 pw 가져오기
     user_info = _db_modules.auth.get_password_by_input_id(input_id)
