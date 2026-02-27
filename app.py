@@ -27,4 +27,4 @@ app.register_blueprint(UserRouter, url_prefix='/user')
 app.register_blueprint(SetRouter, url_prefix='/set')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
