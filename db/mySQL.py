@@ -9,6 +9,7 @@ db_config = {
     "user": os.getenv("MySQL_USER"),
     "password": os.getenv("MySQL_PASSWORD"),
     "database": os.getenv("MySQL_NAME"),
+    "poet": int(os.getenv("MySQL_PORT", 3306)),
     "charset": "utf8mb4",
     "cursorclass": DictCursor
 }
