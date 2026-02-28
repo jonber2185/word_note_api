@@ -22,6 +22,11 @@ app.json.sort_keys = False
 
 jwt = JWTManager(app)
 
+
+@app.route('/', methods=['GET'])
+def welcome():
+    return "welcome to word not api", 200
+
 app.register_blueprint(AuthRouter, url_prefix='/auth')
 app.register_blueprint(UserRouter, url_prefix='/user')
 app.register_blueprint(SetRouter, url_prefix='/set')

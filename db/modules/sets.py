@@ -8,7 +8,7 @@ def create_set(set_id, title, description, owner_id, is_public):
 
 def get_user_sets(user_id) -> list:
     result = run_sql(
-        "SELECT title, is_public, created_at FROM sets WHERE owner_id = %s",
+        "SELECT * FROM sets WHERE owner_id = %s",
         (user_id,),
     )
     if result is None: return []
