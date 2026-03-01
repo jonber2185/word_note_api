@@ -5,6 +5,7 @@ from google.genai import types
 from dotenv import load_dotenv
 load_dotenv()
 
+
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def load_prompt(filename):
@@ -19,10 +20,15 @@ def get_gemini_response(words: list) -> dict:
         model="gemini-2.5-flash", 
         contents=str(words),
         config=types.GenerateContentConfig(
+            system_instruction=system_instruction,
             response_mime_type="application/json",
             max_output_tokens=8000,
-            system_instruction=system_instruction
         )
     )
 
-    return json.loads(response.text)
+    try:
+        return json.loads(response.text)
+    except Exception as e:
+        print(f"\n\nJSON Parsing Error: {e}")
+        print(f"Raw Response: {response.text}\n\n")
+        raise e

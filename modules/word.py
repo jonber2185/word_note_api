@@ -14,7 +14,7 @@ def setWords(set_id, words):
     if words == []: raise _errors.WordError("words is required")
     error_words = []
     for word in words:
-        word_id = word.get("id")
+        word_id = word.get("word_id")
         meaning = word.get('meaning', "")
 
         try:
@@ -44,7 +44,7 @@ def updateWords(set_id, words):
     if words == []: raise _errors.WordError("words is required")
     error_words = []
     for word in words:
-        word_id = word.get("id")
+        word_id = word.get("word_id")
         meaning = word.get('meaning', "")
 
         try:

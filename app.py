@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager
 from router.auth import AuthRouter
 from router.user import UserRouter
 from router.set import SetRouter
+from router.word import WordRouter
 from errors.errors import register_error_handlers
 from dotenv import load_dotenv
 load_dotenv()
@@ -30,6 +31,7 @@ def welcome():
 app.register_blueprint(AuthRouter, url_prefix='/auth')
 app.register_blueprint(UserRouter, url_prefix='/user')
 app.register_blueprint(SetRouter, url_prefix='/set')
+app.register_blueprint(WordRouter, url_prefix='/words')
 
 if __name__ == '__main__':
     app.run()

@@ -1,12 +1,22 @@
 import errors.base as _errors
-from pymysql.err import IntegrityError
+from pymysql.err import IntegrityError as _IntegrityError
 from db import modules as _db_modules
 
+
+def is_valid_set(set_id, identity):
+    response = get_user_set(set_id, identity)
+    if response == {}: raise _errors.SetValidationError("set doesn't exist")
+
+
 def create_set(set_id, title, description, owner_id, is_public):
+    if title == "":
+        raise _errors.SetValidationError("title is required")
     if len(title) > 100:
         raise _errors.SetValidationError("title must be 100 characters or less.")
     if len(description) > 250:
-        raise _errors.SetValidationError("title must be 250 characters or less.")
+        raise _errors.SetValidationError("description must be 250 characters or less.")
+    if is_public != 0 and is_public != 1:
+        raise _errors.SetValidationError("is_public must be 0 or 1.")
 
     try:
         _db_modules.sets.create_set(
@@ -16,9 +26,26 @@ def create_set(set_id, title, description, owner_id, is_public):
             is_public=is_public,
             owner_id=owner_id,
         )
-    except IntegrityError as e:
+    except _IntegrityError as e:
         if e.args[0] == 1062:
             raise _errors.SetError("set already exist.") 
         raise e
+    
+def update_set(set_id, owner_id, title=None, description=None, is_public=None):
+    if title is not None and len(title) > 100:
+        raise _errors.SetValidationError("title must be 100 characters or less.")
+    if description is not None and len(description) > 250:
+        raise _errors.SetValidationError("description must be 250 characters or less.")
+    if is_public is not None and is_public != 0 and is_public != 1:
+        raise _errors.SetValidationError("is_public must be 0 or 1.")
 
-from db.modules.sets import (get_user_set, get_user_sets)
+    _db_modules.sets.update_set(
+        set_id=set_id,
+        owner_id=owner_id,
+        title=title,
+        description=description,
+        is_public=is_public,
+    )
+
+
+from db.modules.sets import (get_user_set, get_user_sets, delete_set)

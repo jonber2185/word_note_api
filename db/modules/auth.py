@@ -19,6 +19,7 @@ def get_token_by_user_id(user_id: str) -> str:
         (user_id,),
         fetchone=True
     )
+    if result is None: return ""
     return result.get('refresh_token', "")
 
 def set_new_refresh_token(user_id: str, token: str):

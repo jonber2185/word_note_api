@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor as _ThreadPoolExecutor
 
 _word_list = _db_connection()
 _word_executor = _ThreadPoolExecutor(max_workers=4)
-_chunk_len = 25
+_chunk_len = 10
 
 def getWordsDetail(words: list) -> list:
     result = []
@@ -26,6 +26,7 @@ def getWordsDetail(words: list) -> list:
         # future ended
         for future in futures:
             future_result = future.result()
+            if future_result is None: continue
             for item in future_result:
                 item['_id'] = _uuid.uuid4().hex[:16]
             result.extend(future_result)
@@ -75,8 +76,10 @@ def updateWord(set_id, word_id, meaning):
     )
 
 def deleteWords(set_id, word_ids):
-    _run_sql(
-        "DELETE FROM words WHERE set_id = %s AND word_id IN %s",
-        (set_id, tuple(word_ids))
-    )
+    placeholders = ', '.join(['%s'] * len(word_ids))
+    sql = f"DELETE FROM words WHERE set_id = %s AND word_id IN ({placeholders})"
+    params = [set_id] + list(word_ids)
+    
+    # 4. 실행
+    _run_sql(sql, tuple(params))
     
